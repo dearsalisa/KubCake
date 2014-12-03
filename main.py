@@ -15,24 +15,27 @@ class KubCakeGame(SimpleGame):
 		super(KubCakeGame, self).__init__('KubCake Game')
 		self.player = Player(100,400)
 		self.cakecollector = CakeCollector()
+		self.start_image = pygame.image.load("start.png")
 		self.bg = pygame.image.load("bg.jpg")
-		#self.cake = Cake()
+		self.bgscore_image = pygame.image.load("bgscore.png")
+		self.start = True
 		self.score = 0
-		self.time = 10
+		self.time = 31
 		self.gameOver = False
 		self.highScore = 0
+		self.status = False
 
 	def init(self):
 		super(KubCakeGame, self).init()
 		self.render_score()
 		self.render_time()
-		self.render_result()
+		self.render_result(self.surface)
 
 	def update(self):
-		self.render_result()
+		self.render_result(self.surface)
 		if self.is_key_pressed(K_RETURN):
 			self.score = 0
-			self.time = 10
+			self.time = 31
 			self.player = Player(100,400)
 			self.gameOver = False
 
@@ -67,11 +70,14 @@ class KubCakeGame(SimpleGame):
 
 	def inputs(self):
 		if self.is_key_pressed(K_LEFT):
+			self.status = False
 			self.player.move_left()
 		elif self.is_key_pressed(K_RIGHT):
+			self.status = True
 			self.player.move_right()
 
-	def render_result(self):
+	def render_result(self,surface):
+		surface.blit(self.bgscore_image,pygame.Rect(200,200,400,205))
 		self.yourscore_image = self.font.render("Your Score : %d" % self.score, 0, KubCakeGame.BLACK)
 		self.highscore_image = self.font.render("High Score : %d" % self.highScore, 0, KubCakeGame.BLACK)
 
@@ -83,14 +89,21 @@ class KubCakeGame(SimpleGame):
 		self.time_image = self.font.render("Time = %d" % self.time, 0, KubCakeGame.BLACK)
 
 	def render(self):
-		self.surface.blit(self.bg, pygame.Rect(-1000,-700, self.bg.get_rect().width, self.bg.get_rect().height))
-		self.player.render(self.surface)
-		self.cakecollector.render(self.surface)
-		self.surface.blit(self.score_image,(10,10))
-		self.surface.blit(self.time_image,(10,40))
-		if self.gameOver:
-			self.surface.blit(self.yourscore_image,(200,180))
-			self.surface.blit(self.highscore_image,(200,200))
+		if self.start :
+			self.surface.blit(self.start_image, pygame.Rect(0,0, self.bg.get_rect().width, self.bg.get_rect().height))
+			if self.is_key_pressed(K_RETURN):
+				self.start = False
+		else :
+			self.surface.blit(self.bg, pygame.Rect(-1000,-700, self.bg.get_rect().width, self.bg.get_rect().height))
+
+			self.player.render(self.surface,self.status)
+			self.cakecollector.render(self.surface)
+			self.surface.blit(self.score_image,(10,10))
+			self.surface.blit(self.time_image,(10,40))
+			if self.gameOver:
+				self.surface.blit(self.bgscore_image,(100,100))
+				self.surface.blit(self.yourscore_image,(200,180))
+				self.surface.blit(self.highscore_image,(200,200))
 		pygame.display.flip()
 		
 def main():

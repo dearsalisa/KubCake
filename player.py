@@ -5,6 +5,7 @@ class Player(object):
  
     def __init__(self,posx,posy):
         self.bg = pygame.image.load("player.png")
+        self.bg2 = pygame.image.load("player2.png")
         self.posx = posx
         self.posy = posy
         self.rect2 = Rect(self.posx,self.posy,121,73)
@@ -13,8 +14,11 @@ class Player(object):
         self.rect2 = Rect(self.posx,self.posy,121,73)
 
  
-    def render(self,surface):
-        surface.blit(self.bg, pygame.Rect(self.posx,self.posy,self.bg.get_rect().width, self.bg.get_rect().height))
+    def render(self,surface,status):
+        if status:
+            surface.blit(self.bg2, pygame.Rect(self.posx,self.posy,self.bg.get_rect().width, self.bg.get_rect().height))
+        else :
+            surface.blit(self.bg, pygame.Rect(self.posx,self.posy,self.bg.get_rect().width, self.bg.get_rect().height))
     
     def getrect(self):
         return self.rect2
